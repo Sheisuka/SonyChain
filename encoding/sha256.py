@@ -2,6 +2,9 @@ import pickle
 
 
 def sha256(message):
+
+    # An array of hex words represent the first 32 bits of the fractional parts of the cube roots of 
+    # the first 64 prime numbers 
     K = [
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
         0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -12,11 +15,11 @@ def sha256(message):
         0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
         0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
     ]
-
+    
     message = _convert_to_bytearray(message)
-    length = len(message) * 8
+    length = len(message) * 8 # Complete message with 0's to make its length multiple of 512
     message.append(0x80)
-    while (len(message) * 8 + 64) % 512 != 0:
+    while (len(message) * 8 + 64) % 512 != 0: 
         message.append(0x00)
     message += length.to_bytes(8, 'big')
 
@@ -26,6 +29,7 @@ def sha256(message):
     for i in range(0, len(message), 64):
         blocks.append(message[i:i + 64])
 
+    # Initial hash values
     h0 = 0x6a09e667
     h1 = 0xbb67ae85
     h2 = 0x3c6ef372
@@ -35,6 +39,7 @@ def sha256(message):
     h6 = 0x1f83d9ab
     h7 = 0x5be0cd19
 
+    # Hash computation by block
     for message_block in blocks:
         message_schedule = []
         for t in range(0, 64):
