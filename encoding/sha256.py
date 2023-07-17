@@ -1,3 +1,6 @@
+from pickle import dumps
+
+
 def sha256(message: bytearray) -> str:
     """Return a SHA-256 hash from the message passed.
     The argument should be a bytes, bytearray, or
@@ -51,8 +54,9 @@ def sha256(message: bytearray) -> str:
         message = bytearray(message, "utf-8")
     elif isinstance(message, bytes):
         message = bytearray(message)
-    elif not isinstance(message, bytearray):
-        raise TypeError
+    else:
+        message_bytes = dumps(message)
+        message = bytearray(message_bytes)
 
     # Padding
     length = len(message) * 8 # len(message) is number of bytes
