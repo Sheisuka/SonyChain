@@ -4,7 +4,7 @@ from re import match
 def round_to_2_power(number: int) -> int:
     """Возращает x, такой, что x это ближайшая степень 2 и x >= number. Пример: 4 -> 4, 3 -> 4, 5 -> 8"""
     tx_log = log2(number)
-    tx_round = round(tx_log + 0.5)
+    tx_round = round(tx_log + 0.49)
     return 2 ** tx_round
 
 
