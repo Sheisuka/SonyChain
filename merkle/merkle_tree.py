@@ -63,7 +63,6 @@ class MerkleTree:
             print(f"{' ' * indent}{node.hash[0:5]}...{node.hash[-5:]}")
             if node.r_son != None:
                 _display(node.r_son, indent + 8)
-        print(list(map(lambda x: x.value, self.elements)))
         if self.root is None:
             print("Дерево пусто")
         else:
@@ -93,24 +92,27 @@ class MerkleTree:
                     self.elements[i], self.elements[i - 1] = self.elements[i - 1], self.elements[i]
             self.fictive_count = round_to_2_power(self.count)
             self.elements = padd_to_2_power(self.elements)
-        else:
-            self.elements[self.count - 1] = element
+        elif self.count < self.fictive_count:
+            self.elements[self.count] = element
             if position == self.count - 1:
                 for i in range(self.count, self.fictive_count): # Фиктивные элементы должны быть копиями последнего элемента
                     self.elements[i] = element
             else:
-                for i in range(self.count - 1, position, -1): # Транспозициями перемещаем новый элемент на его место 
+                for i in range(self.count, position - 1, -1): # Транспозициями перемещаем новый элемент на его место 
                     self.elements[i], self.elements[i - 1] = self.elements[i - 1], self.elements[i]
+
         
         self._update_root_add(position)
     
     def _update_root_add(self, position: int) -> None:
-        if position <= self.fictive_count // 2:
+        if position == self.fictive_count / 2:
             self.root.l_son = self.create(self.elements[0:self.fictive_count//2])
-            self.root.hash = sha256(self.root.l_son.hash + self.root.r_son.hash)
+            self.root.r_son = self.create(self.elements[self.fictive_count//2:])
+        elif position <= self.fictive_count // 2:
+            self.root.l_son = self.create(self.elements[0:self.fictive_count//2])
         else:
             self.root.r_son = self.create(self.elements[self.fictive_count//2:])
-            self.root.hash = sha256(self.root.l_son.hash + self.root.r_son.hash)
+        self.root.hash = sha256(self.root.l_son.hash + self.root.r_son.hash)
     
     def _update_root_delete(self, position: int) -> None:
         if self.count == floor(self.fictive_count / 2):
